@@ -193,8 +193,8 @@ async function searchSongsOnWeb() {
     resultsContainer.innerHTML = `<p style="text-align:center; color:#aaa;">Searching songs...</p>`;
 
     try {
-        // UPDATE THIS URL WHEN HOSTED LIVE
-        let res = await fetch('http://127.0.0.1:5000/search', {
+        // Render ka Live URL (Search ke liye)
+        let res = await fetch('https://mannsutraapk.onrender.com/search', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query: query })
@@ -216,7 +216,7 @@ async function searchSongsOnWeb() {
             </div>
         `).join('');
     } catch (e) {
-        resultsContainer.innerHTML = `<p style="text-align:center; color:#ff4d4d;">Search failed. Check your local Flask server.</p>`;
+        resultsContainer.innerHTML = `<p style="text-align:center; color:#ff4d4d;">Search failed. Please check if your Render backend is awake.</p>`;
     }
 }
 
@@ -227,8 +227,8 @@ async function previewSongFromWeb(encodedUrl, encodedTitle) {
     alert(`Loading preview for "${title}"... Please wait.`);
 
     try {
-        // UPDATE THIS URL WHEN HOSTED LIVE
-        let response = await fetch('http://127.0.0.1:5000/download', {
+        // Render ka Live URL (Preview ke liye)
+        let response = await fetch('https://mannsutraapk.onrender.com/download', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: url })
@@ -260,8 +260,8 @@ async function downloadChosenSong(encodedUrl, encodedTitle) {
     alert(`Starting download for "${title}"... Check your notification panel for progress.`);
 
     try {
-        // UPDATE THIS URL WHEN HOSTED LIVE
-        let response = await fetch('http://127.0.0.1:5000/download', {
+        // Render ka Live URL (Download ke liye)
+        let response = await fetch('https://mannsutraapk.onrender.com/download', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: url })
@@ -282,7 +282,7 @@ async function downloadChosenSong(encodedUrl, encodedTitle) {
             throw new Error("Could not extract direct URL");
         }
     } catch (err) {
-        alert("Error initiating the download. Make sure your backend server is running.");
+        alert("Error initiating the download. Make sure your Render backend is awake.");
         console.error(err);
     }
 }
