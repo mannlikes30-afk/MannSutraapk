@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import yt_dlp
 import os
@@ -48,10 +48,11 @@ def download_audio():
     
     url = data.get('url')
 
-    # Ab hum sirf best audio ka direct URL nikalenge, file download nahi karenge
+    # Naya foolproof method jo signature/n-challenge error bypass kar deta hai
     ydl_opts = {
-        'format': 'bestaudio/best',
-        'quiet': True
+        'format': 'ba*[ext=m4a]/b[ext=m4a]/ba/b',
+        'quiet': True,
+        'skip_download': True
     }
     if os.path.exists('cookies.txt'):
         ydl_opts['cookiefile'] = 'cookies.txt'
@@ -59,10 +60,20 @@ def download_audio():
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
-            direct_url = info.get('url') 
+            
+            # Agar multiple formats hain toh best audio URL pick karein
+            direct_url = None
+            if 'formats' in info:
+                for f in info['formats']:
+                    if f.get('acodec') != 'none' and f.get('vcodec') == 'none':
+                        direct_url = f.get('url')
+                        break
+            
+            if not direct_url:
+                direct_url = info.get('url')
+                
             title = info.get('title', 'Mann Sutra Song')
         
-        # Server direct URL frontend ko bhej dega
         return jsonify({'direct_url': direct_url, 'title': title})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -80,5 +91,5 @@ def wireless_upload():
     return jsonify({'success': True, 'filename': file.filename})
 
 if __name__ == '__main__':
-    # Dhyan dein: Agar server kisi cloud par (Render/Vercel) deploy kar rahe hain to host/port settings cloud ke hisaab se use hongi
-    app.run(host='0.0.0.0', port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
