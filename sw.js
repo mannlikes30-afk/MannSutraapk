@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mann-sutra-v3';
+const CACHE_NAME = 'mann-sutra-v4';
 const assetsToCache = [
   './',
   'index.html',
