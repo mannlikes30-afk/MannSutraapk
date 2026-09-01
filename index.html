@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mann Sutra</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json?v=2">
+</head>
+<body>
+
+    <!-- Header Section -->
+    <div class="top-header">
+        <div class="header-top-row">
+            <h2 id="headerTitle">Mann Sutra Playlist</h2>
+            <span onclick="openSettings()" class="settings-gear" title="Settings">⚙️</span>
+        </div>
+        <div id="searchContainer">
+            <input type="text" id="searchInput" placeholder="Search local songs..." oninput="filterSongs()">
+        </div>
+    </div>
+
+    <!-- Song List Section -->
+    <div class="song-list" id="songList">
+        <p id="empty-msg" style="color: #888; text-align: center; margin-top: 40px;">No songs added yet. Tap '+ Upload' or 'Web URL' below.</p>
+    </div>
+
+    <!-- Hidden File Inputs -->
+    <input type="file" id="fileInput" accept="audio/*" multiple style="display: none;" onchange="handleFiles(event)">
+    <input type="file" id="importInput" accept=".json" style="display: none;" onchange="importPlaylist(event)">
+
+    <!-- Audio Visualizer Canvas -->
+    <canvas id="visualizer" width="400" height="40"></canvas>
+
+    <!-- Bottom Player -->
+    <div class="bottom-player">
+        <div class="progress-container">
+            <span id="currentTime">0:00</span>
+            <input type="range" id="progressBar" value="0" max="100" oninput="seekAudio()">
+            <span id="durationTime">0:00</span>
+        </div>
+
+        <div class="player-main-row">
+            <div class="player-left-info">
+                <img id="currentImg" src="logo.png" onerror="this.src='https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17'" alt="cover">
+                <div class="song-details">
+                    <h4 id="currentTitle">Select a song</h4>
+                    <p id="currentArtist">Mann Sutra</p>
+                </div>
+                <span onclick="toggleLikeCurrent()" id="currentLikeBtn" class="like-btn" title="Like">🤍</span>
+            </div>
+
+            <div class="player-controls">
+                <span onclick="toggleShuffle()" id="shuffleBtn" class="control-icon" title="Shuffle">🔀</span>
+                <span onclick="prevSong()" class="control-icon">⏮</span>
+                <span onclick="togglePlay()" id="playBtn" class="play-pause-btn">▶</span>
+                <span onclick="nextSong()" class="control-icon">⏭</span>
+                <span onclick="toggleLoop()" id="loopBtn" class="control-icon" title="Loop">🔁</span>
+            </div>
+
+            <div class="extra-controls">
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="1" oninput="changeVolume()" title="Volume">
+                <span onclick="toggleLyrics()" class="control-icon" title="Lyrics">📜</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lyrics Modal -->
+    <div id="lyricsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Song Lyrics</h3>
+            <p id="lyricsText">No lyrics available.</p>
+            <button onclick="toggleLyrics()">Close</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-height: 85vh; overflow-y: auto;">
+            <h3>Pro Settings & Equalizer</h3>
+            
+            <label>Accent Theme:</label>
+            <div class="theme-picker">
+                <span class="theme-dot" style="background: #ff2a85;" onclick="setTheme('#ff2a85')"></span>
+                <span class="theme-dot" style="background: #b829ff;" onclick="setTheme('#b829ff')"></span>
+                <span class="theme-dot" style="background: #00f0ff;" onclick="setTheme('#00f0ff')"></span>
+                <span class="theme-dot" style="background: #1db954;" onclick="setTheme('#1db954')"></span>
+            </div>
+
+            <label style="margin-top: 15px; display: block;">Backup:</label>
+            <div class="backup-buttons">
+                <button onclick="exportPlaylistJSON()">Export</button>
+                <button onclick="document.getElementById('importInput').click()">Import</button>
+            </div>
+
+            <button onclick="openSettings()" style="margin-top: 15px; background: rgba(255,255,255,0.1);">Close</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="document.getElementById('fileInput').click()">
+            <span>➕</span>
+            <p>+ Upload</p>
+        </div>
+        <div class="nav-item active" id="navPlaylist" onclick="switchTab('playlist')">
+            <span>🎵</span>
+            <p>Playlist</p>
+        </div>
+        <div class="nav-item" id="navLiked" onclick="switchTab('liked')">
+            <span>❤️</span>
+            <p>Liked</p>
+        </div>
+        <div class="nav-item" id="navWeb" onclick="switchTab('web')">
+            <span>🌐</span>
+            <p>Web URL</p>
+        </div>
+    </div>
+
+    <audio id="audioPlayer" crossorigin="anonymous"></audio>
+    <script src="script.js"></script>
+</body>
+</html>
